@@ -27,7 +27,7 @@ The @tech{expand} pass recursively processes a @tech{syntax object}
 to produce a complete @tech{parse} of the program. @tech{Binding}
 information in a @tech{syntax object} drives the @tech{expansion}
 process, and when the @tech{expansion} process encounters a
-@tech{binding} form, it extends syntax objects for sub-expression with
+@tech{binding} form, it extends syntax objects for sub-expressions with
 new binding information.
 
 @;------------------------------------------------------------------------
@@ -103,7 +103,7 @@ case
                  x))]
 
 the inner @racket[let] creates a second scope for the second
-@racket[x]s, so its @tech{scope set} is a superset of the first
+@racket[x], so its @tech{scope set} is a superset of the first
 @racket[x]'s @tech{scope set}---which means that the binding for the
 second @racket[x] @tech{shadows} the one for the first @racket[x], and
 the third @racket[x] refers to the binding created by the second one.
@@ -211,7 +211,7 @@ The @racket[quote-syntax] form bridges the evaluation of a program and
 the representation of a program. Specifically, @racket[(quote-syntax
 _datum #:local)] produces a syntax object that preserves all of the
 lexical information that @racket[_datum] had when it was parsed as
-part of the @racket[quote-syntax] form. Note that
+part of the @racket[quote-syntax] form. Note that the
 @racket[(quote-syntax _datum)] form is similar, but it removes certain
 @tech{scopes} from the @racket[_datum]'s @tech{scope sets};
 see @racket[quote-syntax] for more information.
@@ -224,8 +224,8 @@ particular phase level, starting with @tech{phase level} 0. @tech{Bindings}
 from the @tech{syntax object}'s @tech{lexical information} drive the
 expansion process, and cause new bindings to be introduced for the
 lexical information of sub-expressions. In some cases, a
-sub-expression is expanded in a deeper phase than the enclosing
-expression.
+sub-expression is expanded in a phase deeper (having a  
+bigger phase level number) than the enclosing expression.
 
 @;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 @subsection[#:tag "fully-expanded"]{Fully Expanded Programs}
@@ -311,8 +311,8 @@ syntactic-form names refer to the bindings defined in
 
 In a fully expanded program for a namespace whose @tech{base phase} is
 0, the relevant @tech{phase level} for a binding in the program is
-@math{N} if the bindings has @math{N} surrounding
-@racket[begin-for-syntax] and @racket[define-syntaxes] forms---not
+@math{N} if the binding has @math{N} surrounding
+@racket[begin-for-syntax] and/or @racket[define-syntaxes] forms---not
 counting any @racket[begin-for-syntax] forms that wrap a
 @racket[module] or @racket[module*] form for the body of the @racket[module]
 or @racket[module*], unless a @racket[module*] form has @racket[#f] in place
@@ -520,7 +520,7 @@ core syntactic forms are encountered:
  @item{When a @racket[define], @racket[define-values],
        @racket[define-syntax], or @racket[define-syntaxes] form is
        encountered at the top level or module level, a binding is
-       added @tech{phase level} 0 (i.e., the @tech{base environment}
+       added to @tech{phase level} 0 (i.e., the @tech{base environment}
        is extended) for each defined identifier.}
 
  @item{When a @racket[begin-for-syntax] form is encountered at the top
@@ -528,8 +528,8 @@ core syntactic forms are encountered:
        @racket[define-values] and @racket[define-syntaxes], but at
        @tech{phase level} 1 (i.e., the @tech{transformer environment}
        is extended). More generally, @racket[begin-for-syntax] forms
-       can be nested, an each @racket[begin-for-syntax] shifts its
-       body definition by one @tech{phase level}.}
+       can be nested, and each @racket[begin-for-syntax] shifts its
+       body by one @tech{phase level}.}
 
  @item{When a @racket[let-values] form is encountered, the body of the
        @racket[let-values] form is extended (by creating new
