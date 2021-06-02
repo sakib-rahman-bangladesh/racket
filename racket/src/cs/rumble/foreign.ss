@@ -1768,7 +1768,7 @@
             (loop (cdr types) (cons (ctype-host-rep type) reps) decls)))])))
 
 ;; Rely on the fact that a virtual register defaults to 0 to detect a
-;; thread that we didn't start. For a thread that we did start, a
+;; thread that we didn't start.
 (define PLACE-UNKNOWN-THREAD 0)
 (define PLACE-KNOWN-THREAD 1)
 (define PLACE-MAIN-THREAD 2)
@@ -1826,6 +1826,12 @@
                                  known-thread?
                                  ;; Wait for result:
                                  #t))]))
+
+(define (call-enabling-ffi-callbacks proc)
+  (disable-interrupts)
+  (let ([v (proc)])
+    (enable-interrupts)
+    v))
 
 (define scheduler-start-atomic void)
 (define scheduler-end-atomic void)
